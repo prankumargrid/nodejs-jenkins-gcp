@@ -1,0 +1,17 @@
+{
+  "name": "nodejs-jenkins-gcp",
+  "version": "1.0.0",
+  "description": "Node.js app with Jenkins CI/CD on GCP",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "express": "^4.22.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.2.2"
+  }
+}
