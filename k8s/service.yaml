@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-jenkins-gcp-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: nodejs-jenkins-gcp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
