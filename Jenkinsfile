@@ -44,23 +44,22 @@ pipeline {
       }
     }
 
-    stage('Build Docker Image') {
-      steps {
-        withCredentials([
-          string(credentialsId: 'gcp-project-id', variable: 'GCP_PROJECT_ID'),
-          string(credentialsId: 'artifact-registry-region', variable: 'GAR_REGION')
-        ]) {
-          script {
-            env.FULL_IMAGE = "${GAR_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GAR_REPO}/${APP_NAME}:${IMAGE_TAG}"
-            env.FULL_IMAGE_LATEST = "${GAR_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GAR_REPO}/${APP_NAME}:latest"
-          }
-          sh '''
-            docker build -t $FULL_IMAGE .
-            docker tag $FULL_IMAGE $FULL_IMAGE_LATEST
-          '''
+    stage('Build and Push Docker Image') {
+    steps {
+      withCredentials([
+        string(credentialsId: 'gcp-project-id', variable: 'GCP_PROJECT_ID'),
+        string(credentialsId: 'artifact-registry-region', variable: 'GAR_REGION')
+      ]) {
+        script {
+          env.FULL_IMAGE = "${GAR_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/nodejs-webapp/nodejs-jenkins-gcp:${IMAGE_TAG}"
         }
+        sh '''
+          docker buildx create --use --name multiarch-builder 2>/dev/null || true
+          docker buildx build --platform linux/amd64 -t $FULL_IMAGE --push .
+        '''
       }
     }
+  }
 
     stage('Security Scan - Trivy') {
       steps {
